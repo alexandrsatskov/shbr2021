@@ -151,11 +151,11 @@ def patch_courier(loaded_request_data, courier_id):
                                table=Courier,
                                current_session=db.session)
 
-    successful_response = CourierSchema().dump(courier)
-
     for key, value in loaded_request_data.items():
         setattr(courier, key, value)
     db.session.commit()
+
+    successful_response = CourierSchema().dump(courier)
 
     assigned_orders = courier_assigned_orders(db.session, courier_id)
     is_already_assigned = \
