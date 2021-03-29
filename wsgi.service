@@ -1,0 +1,13 @@
+[Unit]
+Description=YandexBackend_rest-api
+After=network.target
+
+[Service]
+User=<user>
+Group=www-data
+WorkingDirectory=/home/<user>/yandex_backend
+Environment="PATH=/home/<user>/yandex_backend/venv/bin"
+ExecStart=/home/<user>/yandex_backend/venv/bin/gunicorn -w 4 wsgi:app
+
+[Install]
+WantedBy=multi-user.target
