@@ -108,6 +108,7 @@ def request_schema(marshmallow_schema, many_: bool = False):
 @app.route('/couriers', methods=['GET'])
 def get_couriers():
     couriers = db.session.query(Courier).all()
+    print(CourierSchema(many=True).dump(couriers))
     return jsonify(CourierSchema(many=True).dump(couriers)), 200
 
 

@@ -5,29 +5,29 @@ from enum import Enum, unique
 
 @unique
 class CourierType(Enum):
-    FOOT = 'foot'
-    BIKE = 'bike'
-    CAR = 'car'
+    foot = 'foot'
+    bike = 'bike'
+    car = 'car'
 
     def get_weight(self) -> float:
-        if self is self.FOOT:
+        if self is self.foot:
             return 10.
-        elif self is self.BIKE:
+        elif self is self.bike:
             return 15.
-        elif self is self.CAR:
+        elif self is self.car:
             return 50.
 
     def get_coefficient(self) -> int:
-        if self is self.FOOT:
+        if self is self.foot:
             return 2
-        elif self is self.BIKE:
+        elif self is self.bike:
             return 5
-        elif self is self.CAR:
+        elif self is self.car:
             return 9
 
 
 @unique
 class OrderStatus(Enum):
-    AVAILABLE = 'available'
-    ASSIGNED = 'assigned'
-    COMPLETED = 'completed'
+    available = 'available'
+    assigned = 'assigned'
+    completed = 'completed'

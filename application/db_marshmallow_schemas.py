@@ -74,7 +74,8 @@ class CourierSchema(PatchCourierSchema):
     courier_id = \
         Int(validate=Range(min=0), strict=True, required=True)
     courier_type = \
-        EnumField(CourierType, by_value=True, error=ERROR_VALIDATION['courier_type'])
+        EnumField(CourierType, by_value=True, required=True,
+                  error=ERROR_VALIDATION['courier_type'])
     regions = \
         List(Int(validate=Range(min=0), strict=True), required=True,
              validate=[Length(min=1, error=ERROR_VALIDATION['empty']), validate_regions_unique])
