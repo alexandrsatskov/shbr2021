@@ -37,13 +37,15 @@ PS. Не сделал тесты, но все остальное должно р
 `pip3 install psycopg2-binary gunicorn`
 
 ## 2. База данных: ##
-* В файле config.py находятся переменные для подключения к БД, их нужно будет править под себя, при необходимости.
-`DBMS = 'postgresql'`<br />
-`DATABASE_HOST = '127.0.0.1'`<br />
-`DATABASE_PORT = '5432'`<br />
-`DATABASE_NAME = 'postgres'`<br />
-`DATABASE_USERNAME = 'dev'`<br />
-`DATABASE_PASSWORD = 'root'`<br />
+* В файле config.py находятся переменные для подключения к БД, их нужно будет править под себя, при необходимости.<br />
+```
+DBMS = 'postgresql'
+DATABASE_HOST = '127.0.0.1'
+DATABASE_PORT = '5432'
+DATABASE_NAME = 'postgres'
+DATABASE_USERNAME = 'dev'
+DATABASE_PASSWORD = 'root'
+```
 
 * Создаем нового юзера для БД (для моего решения создается dev:root)<br />
 `sudo -u postgres psql`<br />
@@ -54,48 +56,53 @@ PS. Не сделал тесты, но все остальное должно р
 ## 3. Автозапуск после перезагрузки: ##
 * Файл wsgi.service содержит необходимое описание для его использования системой инициализации systemd, все что нужно сделать:
 1) Заменить \<user\> на Вашего юзера:
-> [Unit]<br />
-> Description=YandexBackend_rest-api<br />
-> After=network.target<br />
->
-> [Service]<br />
-> User=\<user\><br />
-> Group=www-data<br />
-> WorkingDirectory=/home/\<user\>/yandex_backend<br />
-> Environment="PATH=/home/\<user\>/yandex_backend/venv/bin"<br />
-> ExecStart=/home/\<user\>/yandex_backend/venv/bin/gunicorn -w 4 -b unix:yandex_backend.sock -m 007 wsgi:app<br />
->
-> [Install]<br />
-> WantedBy=multi-user.target<br />
+```
+[Unit]
+Description=YandexBackend_rest-api
+After=network.target
+
+[Service]
+User=\<user\>
+Group=www-data
+WorkingDirectory=/home/\<user\>/yandex_backend
+Environment="PATH=/home/\<user\>/yandex_backend/venv/bin"
+ExecStart=/home/\<user\>/yandex_backend/venv/bin/gunicorn -w 4 -b unix:yandex_backend.sock -m 007 wsgi:app
+
+[Install]
+WantedBy=multi-user.target
+```
 
 2) Скопировать файл в /etc/systemd/system/ <br />
 `sudo cp -i /home/entrant/yandex_backend/wsgi.service`
 
-* Даем право на автозапуск:
+* Даем право на автозапуск:<br />
 `sudo systemctl enable wsgi`
-* Стартуем процесс
+* Стартуем процесс<br />
 `sudo systemctl start wsgi`
 
 ## 4. NGINX ##
 `sudo ufw allow 'Nginx Full'`
 
-* Создаем файл конфигурации в Nginx's sites-available директории
+* Создаем файл конфигурации в Nginx's sites-available директории<br />
 `sudo nano /etc/nginx/sites-available/yandex_backend`
 
-> server {
->     listen 80;
->     server_name 178.154.205.166;
-> 
->     location / {
->         include proxy_params;
->         proxy_pass http://unix:/home/entract/yandex_backend/yandex_backend.sock;
->     }
-> }
+```
+server {
+    listen 80;
+    server_name 178.154.205.166;
 
-* Линкуем созданный файл в sites-enabled директорию
+    location / {
+        include proxy_params;
+        proxy_pass http://unix:/home/entract/yandex_backend/yandex_backend.sock;
+    }
+}
+```
+
+* Линкуем созданный файл в sites-enabled директорию<br />
 `sudo ln -s /etc/nginx/sites-available/yandex_backend /etc/nginx/sites-enabled`
 
 * Перезапускаем Nginx
 `sudo systemctl restart nginx`
 
-# **Насладждаемся** #
+# **Насладждаемся** # 
+:woozy_face:
