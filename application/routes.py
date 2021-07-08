@@ -108,7 +108,7 @@ def request_schema(marshmallow_schema, many_: bool = False):
 @app.route('/couriers', methods=['GET'])
 def get_couriers():
     couriers = db.session.query(Courier).all()
-    print(CourierSchema(many=True).dump(couriers))
+    # print(CourierSchema(many=True).dump(couriers))
     return jsonify(CourierSchema(many=True).dump(couriers)), 200
 
 
@@ -268,7 +268,7 @@ def complete_order(loaded_request_data):
                              table=Order,
                              current_session=db.session)
 
-    # Все подобные исключения перехватываюстя в request_schema
+    # Все подобные исключения перехватываютcя в request_schema
     if order.status.value == 'available':
         raise ValidationError(
             f'order_id: {order.order_id} -> Заказ с данным ID еще не назначен!')
