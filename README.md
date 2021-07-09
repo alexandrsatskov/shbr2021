@@ -1,6 +1,6 @@
 ## Реализация вступительного задания в yandex backend school 2к21.
-Задание: [техническое задание](https://github.com/twinkleToes2001/yandex_backend/docs/assignment.pdf)  
-FAQ по заданию: [FAQ](https://github.com/twinkleToes2001/yandex_backend/docs/faq.pdf)
+Задание: [техническое задание](https://github.com/twinkleToes2001/yandex_backend/tree/main/docs/assignment.pdf)  
+FAQ по заданию: [FAQ](https://github.com/twinkleToes2001/yandex_backend/tree/main/docs/faq.pdf)
 
 ## Приятнейшего вечерочка проверяющему мой вариант реализации вступительного задания в школу backend разработки от Yandex. ##
 
