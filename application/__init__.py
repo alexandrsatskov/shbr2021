@@ -7,8 +7,7 @@ from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
 
-def create_app(dbms, user, password,
-               host, port, database):
+def create_app(db_url):
 
     app = Flask(__name__)
 
@@ -17,15 +16,15 @@ def create_app(dbms, user, password,
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     # Database
-    app.config['SQLALCHEMY_DATABASE_URI'] = \
-        f'{dbms}://{user}:{password}@{host}:{port}/{database}'
+    app.config['SQLALCHEMY_DATABASE_URI'] = db_url
+    app.testing = True
 
     # Init database
     db.init_app(app)
 
     with app.app_context():
-        from . import routes
-
+        from application import routes
+        app.register_blueprint(routes.api)
         db.create_all()
 
-        return app
+    return app

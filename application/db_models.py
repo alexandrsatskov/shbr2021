@@ -1,7 +1,7 @@
 """Описание таблиц БД в представлении Flask-SQLAlchemy"""
 
-from . import db
-from .db_enum import CourierType, OrderStatus
+from application import db
+from application.db_enum import CourierType, OrderStatus
 
 
 class Courier(db.Model):
