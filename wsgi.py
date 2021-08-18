@@ -13,4 +13,15 @@ app = create_app(
 )
 
 if __name__ == '__main__':
-    app.run()
+    from pstats import Stats, SortKey
+    from cProfile import Profile
+
+    # pr = Profile()
+    # pr.enable()
+
+    from werkzeug.middleware.profiler import ProfilerMiddleware
+    # app.wsgi_app = ProfilerMiddleware(app.wsgi_app, restrictions=[30], profile_dir='.\\profile')
+    app.run(host="0.0.0.0")
+    #
+    # pr.disable()
+    # Stats(pr).strip_dirs().sort_stats(SortKey.CUMULATIVE).print_stats()

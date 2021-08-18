@@ -1,4 +1,5 @@
 import re
+import time
 from statistics import mean
 from datetime import datetime
 from functools import wraps
@@ -100,16 +101,23 @@ def request_schema(marshmallow_schema, many_: bool = False):
     def wrapper(function):
         @wraps(function)
         def inner_wrapper(*args, **kwargs):
+            s = time.perf_counter()
+            print(f'req_schema start')
             data = request.get_json()
+            print(f'req_schema end get_json() {(time.perf_counter() - s)}')
+
             schema = marshmallow_schema(many=many_)
 
             try:
                 # Валидация значений
                 loaded_data = schema.load(data)
 
+                print(f'req_schema end schema_load {(time.perf_counter() - s)}')
+
                 # Валидация при участии БД. Из хендлера приходит ValidationError,
                 # если записи не найдено, либо нарушается pk constraint.
                 result = function(loaded_data, *args, **kwargs)
+                print(f'req_schema end handler {(time.perf_counter() - s)}')
             except ValidationError as err:
                 return jsonify({"validation_error": err.normalized_messages()}), 400
             return result
@@ -119,6 +127,19 @@ def request_schema(marshmallow_schema, many_: bool = False):
 
 
 api = Blueprint("api", __name__)
+
+
+@api.route("/couriers", methods=["DELETE"])
+def delete_couriers():
+    successful_response = {"couriers": []}
+
+    couriers = db.session.query(Courier).order_by(Courier.courier_id).all()
+    for courier in couriers:
+        successful_response["couriers"].append({"id": courier.courier_id})
+
+    db.session.query(Courier).delete()
+    db.session.commit()
+    return jsonify(successful_response), 200
 
 
 @api.route("/couriers", methods=["GET"])
@@ -136,11 +157,13 @@ def get_orders():
 @api.route("/couriers", methods=["POST"])
 @request_schema(ImportCourierSchema)
 def post_couriers(loaded_request_data):
+    print('started handler')
+    s = time.perf_counter()
     successful_response = {"couriers": []}
 
     # Сериализованные данные, полученные из request_schema
-    couriers = loaded_request_data["data"]
 
+    couriers = loaded_request_data["data"]
     for courier in couriers:
         successful_response["couriers"].append({"id": courier["courier_id"]})
 
@@ -153,9 +176,12 @@ def post_couriers(loaded_request_data):
             )
         )
 
+    print(f'handler end adding to session {time.perf_counter() - s}')
     # Выбрасывает ValidationError, если id уже существует,
     # обработка происходит в request_schema
     check_pk_violation(db.session, id_name="courier_id")
+    print(f'handler end check_pk_violation {time.perf_counter() - s}')
+
     return jsonify(successful_response), 201
 
 
